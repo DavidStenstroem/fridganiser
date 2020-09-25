@@ -1,0 +1,6 @@
+- table:
+    schema: public
+    name: user_public
+- table:
+    schema: public
+    name: users
