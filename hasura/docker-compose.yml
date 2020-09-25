@@ -1,0 +1,29 @@
+version: "3.6"
+services:
+  db:
+    image: postgres:12
+    restart: always
+    volumes:
+      - fridganiser_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: fridganiser
+  graphql-engine:
+    image: hasura/graphql-engine:v1.3.2
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "db"
+    restart: always
+    environment:
+      ACTION_BASE_URL: http://localhost:3000/api
+      HASURA_GRAPHQL_DATABASE_URL: postgres://dbuser:postgrespassword@db:5432/fridganiser
+      ## enable the console served by server
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      ## enable debugging mode. It is recommended to disable this in production
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+volumes:
+  fridganiser_data:
